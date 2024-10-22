@@ -1,212 +1,234 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Database API Documentation</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                background-color: #f4f4f4;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexGuardDB API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .endpoint {
+            background-color: #fff;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        code, pre {
+            background-color: #eaeaea;
+            padding: 5px;
+            border-radius: 5px;
+            overflow-x-auto;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FlexGuardDB API Documentation</h1>
+        <p>Version 1.0</p>
+    </div>
 
-            h1,
-            h2,
-            h3 {
-                color: #333;
-            }
+    <h2>Overview</h2>
+    <p>FlexGuardDB is a <strong>Node.js-based RESTful API</strong> offering powerful <strong>user authentication</strong> and <strong>database management</strong> capabilities. It allows users to <strong>create custom tables</strong>, manage their data through CRUD operations, and securely handle authentication using <strong>JWT tokens</strong>.</p>
 
-            .endpoint {
-                background-color: #fff;
-                border-radius: 8px;
-                margin-bottom: 15px;
-                padding: 15px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
+    <h3>Key Features</h3>
+    <ul>
+        <li><strong>User Authentication:</strong> Register, Login, Logout, and Refresh Tokens with JWT.</li>
+        <li><strong>Database Operations:</strong> Create dynamic tables, insert data, update rows, and query with complex conditions.</li>
+        <li><strong>Token Management:</strong> Access tokens (15 min) and Refresh tokens (7 days).</li>
+        <li><strong>Persistent Storage:</strong> Tokens and database stored in compressed JSON files.</li>
+        <li><strong>Supported Data Types:</strong> INTEGER, STRING, BOOLEAN, and DATE.</li>
+    </ul>
 
-            code,
-            pre {
-                background-color: #eaeaea;
-                padding: 5px;
-                margin-top: 5px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
+    <h2>Use Case Flow</h2>
+    <ol>
+        <li><strong>Register and Login:</strong> A user registers and logs in to receive access and refresh tokens.</li>
+        <li><strong>Create a Table:</strong> The user creates a new table dynamically with primary keys and auto-increment fields.</li>
+        <li><strong>Insert Data:</strong> Rows are inserted with values matching the schema.</li>
+        <li><strong>Query Data:</strong> Users query data with conditions using logical operators (AND/OR).</li>
+        <li><strong>Token Refresh:</strong> Use the refresh token to get new tokens when the access token expires.</li>
+        <li><strong>Logout:</strong> Logging out invalidates both access and refresh tokens.</li>
+    </ol>
 
-            .header {
-                background-color: #333;
-                color: white;
-                padding: 15px;
-                text-align: center;
-            }
-
-            footer {
-                margin-top: 20px;
-                text-align: center;
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="header">
-            <h1>Database API Documentation</h1>
-            <p>Version 1.0</p>
-        </div>
-
-        <h2>Authentication</h2>
-        <div class="endpoint">
-            <h3>Register User</h3>
-            <p><strong>POST</strong> /register</p>
-            <p>
-                Registers a new user with email, username, and a secure
-                password.
-            </p>
-            <p>
-                <strong>Password Requirements:</strong> Minimum 8 characters, at
-                least one uppercase letter, one lowercase letter, one number,
-                and one special character.
-            </p>
-            <pre>
-Request Body:
+    <h2>Authentication Endpoints</h2>
+    <div class="endpoint">
+        <h3>POST /register</h3>
+        <p>Registers a new user.</p>
+        <pre>
+Request:
 {
     "email": "user@example.com",
-    "username": "testuser",
+    "username": "user123",
     "password": "Password@123"
-}</pre
-            >
-            <p>
-                <strong>Response:</strong> 201 Created - User registered
-                successfully.
-            </p>
-        </div>
+}
+Response:
+201 Created - User registered successfully.
+400 Bad Request - Missing or invalid fields.
+409 Conflict - Username or email already exists.
+        </pre>
+    </div>
 
-        <h2>Data Types</h2>
-        <p>
-            When creating a table, you can specify the following data types for
-            the columns:
-        </p>
-        <ul>
-            <li><strong>INTEGER:</strong> Stores integer values.</li>
-            <li><strong>STRING:</strong> Stores text values.</li>
-            <li><strong>BOOLEAN:</strong> Stores true/false values.</li>
-            <li><strong>DATE:</strong> Stores date objects.</li>
-            <li>
-                <strong>NULL:</strong> Allows storing <code>null</code> values.
-            </li>
-        </ul>
+    <div class="endpoint">
+        <h3>POST /login</h3>
+        <p>Log in and receive access and refresh tokens.</p>
+        <pre>
+Request:
+{
+    "username": "user123",
+    "password": "Password@123"
+}
+Response:
+200 OK - Login successful.
+{
+    "accessToken": "access-token",
+    "refreshToken": "refresh-token"
+}
+401 Unauthorized - Invalid credentials.
+        </pre>
+    </div>
 
-        <h2>Table Operations</h2>
-        <div class="endpoint">
-            <h3>Create Table</h3>
-            <p><strong>POST</strong> /createTable</p>
-            <p>Creates a new table with the specified columns.</p>
-            <pre>
-Request Body:
+    <div class="endpoint">
+        <h3>POST /logout</h3>
+        <p>Log out and invalidate tokens.</p>
+        <pre>
+Request:
+{
+    "accessToken": "access-token",
+    "refreshToken": "refresh-token"
+}
+Response:
+200 OK - Logged out successfully.
+400 Bad Request - Invalid tokens.
+401 Unauthorized - Invalid or expired access token.
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /refresh</h3>
+        <p>Refresh tokens by issuing new access and refresh tokens.</p>
+        <pre>
+Request:
+{
+    "token": "refresh-token"
+}
+Response:
+200 OK - Tokens refreshed.
+{
+    "accessToken": "new-access-token",
+    "refreshToken": "new-refresh-token"
+}
+401 Unauthorized - Invalid or expired refresh token.
+        </pre>
+    </div>
+
+    <h2>Database Operations</h2>
+    <div class="endpoint">
+        <h3>POST /createTable</h3>
+        <p>Create a new table with a custom schema.</p>
+        <pre>
+Request:
 {
     "tableName": "users",
     "columns": [
-        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "id", "type": "INTEGER", "primaryKey": true, "autoIncrement": true },
         { "name": "name", "type": "STRING" },
         { "name": "age", "type": "INTEGER" }
     ]
-}</pre
-            >
-            <p>
-                <strong>Response:</strong> 201 Created - Table created
-                successfully.
-            </p>
-        </div>
+}
+Response:
+201 Created - Table created successfully.
+400 Bad Request - Invalid table schema.
+409 Conflict - Table already exists.
+        </pre>
+    </div>
 
-        <div class="endpoint">
-            <h3>Create Table If Not Exist</h3>
-            <p><strong>POST</strong> /createTableIfNotExist</p>
-            <p>Creates a table if it doesn't already exist.</p>
-            <pre>
-Request Body:
+    <div class="endpoint">
+        <h3>POST /insert</h3>
+        <p>Insert a row into a table.</p>
+        <pre>
+Request:
 {
     "tableName": "users",
-    "columns": [
-        { "name": "id", "type": "INTEGER", "primaryKey": true },
-        { "name": "name", "type": "STRING" },
-        { "name": "age", "type": "INTEGER" }
+    "values": [null, "Alice", 25]
+}
+Response:
+201 Created - Data inserted successfully.
+400 Bad Request - Invalid data or table does not exist.
+409 Conflict - Duplicate primary key value.
+        </pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>POST /select</h3>
+        <p>Query data with optional conditions and logical operators.</p>
+        <pre>
+Request:
+{
+    "tableName": "users",
+    "conditions": [
+        [{ "column": "age", "operator": ">", "value": 20 }, "AND", { "column": "name", "operator": "!=", "value": "Bob" }]
     ]
-}</pre
-            >
-            <p>
-                <strong>Response:</strong> 201 Created or 200 OK if the table
-                already exists.
-            </p>
-        </div>
+}
+Response:
+200 OK - Array of matching rows.
+400 Bad Request - Invalid query or table does not exist.
+        </pre>
+    </div>
 
-        <div class="endpoint">
-            <h3>Insert Data</h3>
-            <p><strong>POST</strong> /insert</p>
-            <p>Inserts a new row into the specified table.</p>
-            <pre>
-Request Body:
+    <div class="endpoint">
+        <h3>POST /update</h3>
+        <p>Update rows that match conditions.</p>
+        <pre>
+Request:
 {
     "tableName": "users",
-    "values": [1, "Alice", 30]
-}</pre
-            >
-            <p>
-                <strong>Response:</strong> 201 Created - Data inserted
-                successfully.
-            </p>
-        </div>
+    "conditions": [{ "column": "id", "operator": "==", "value": 1 }],
+    "updates": { "age": 30 }
+}
+Response:
+200 OK - Number of rows updated.
+400 Bad Request - Invalid update data or table does not exist.
+        </pre>
+    </div>
 
-        <div class="endpoint">
-            <h3>Select Data</h3>
-            <p><strong>GET</strong> /select</p>
-            <p>Selects data from the specified table.</p>
-            <pre>
-Query Parameters:
-?tableName=users&column=age&operator=%3E&value=25</pre
-            >
-            <p><strong>Response:</strong> Selected rows in JSON format.</p>
-        </div>
+    <h2>Operators and Data Types</h2>
+    <h3>Comparison Operators</h3>
+    <ul>
+        <li><strong>==</strong>: Equals</li>
+        <li><strong>!=</strong>: Not Equals</li>
+        <li><strong>></strong>: Greater Than</li>
+        <li><strong>>=</strong>: Greater Than or Equal</li>
+        <li><strong><</strong>: Less Than</li>
+        <li><strong><=</strong>: Less Than or Equal</li>
+    </ul>
 
-        <div class="endpoint">
-            <h3>Update Data</h3>
-            <p><strong>POST</strong> /update</p>
-            <p>Updates rows that match the given conditions.</p>
-            <pre>
-Request Body:
-{
-    "tableName": "users",
-    "conditions": [{ "column": "name", "operator": "==", "value": "Alice" }],
-    "updates": { "age": 31 }
-}</pre
-            >
-            <p><strong>Response:</strong> Number of rows updated.</p>
-        </div>
+    <h3>Supported Data Types</h3>
+    <ul>
+        <li><strong>INTEGER</strong>: Whole numbers</li>
+        <li><strong>STRING</strong>: Text values</li>
+        <li><strong>BOOLEAN</strong>: True/false values</li>
+        <li><strong>DATE</strong>: Date objects</li>
+    </ul>
 
-        <div class="endpoint">
-            <h3>Get Table Names</h3>
-            <p><strong>GET</strong> /tableNames</p>
-            <p>Retrieves the names of all available tables.</p>
-            <p>
-                <strong>Response:</strong> Array of table names in JSON format.
-            </p>
-        </div>
-
-        <div class="endpoint">
-            <h3>Get Table Schema</h3>
-            <p><strong>GET</strong> /tableSchema</p>
-            <p>Retrieves the schema of the specified table.</p>
-            <pre>
-Query Parameter:
-?tableName=users</pre
-            >
-            <p>
-                <strong>Response:</strong> JSON object representing the table
-                schema.
-            </p>
-        </div>
-
-        <footer>
-            <p>© 2024 Your Company. All rights reserved.</p>
-        </footer>
-    </body>
+    <footer>
+        <p>© 2024 FlexGuardDB API Documentation</p>
+    </footer>
+</body>
 </html>
