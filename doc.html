@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Database API Documentation</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f4f4f4;
+            }
+
+            h1,
+            h2,
+            h3 {
+                color: #333;
+            }
+
+            .endpoint {
+                background-color: #fff;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                padding: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            code,
+            pre {
+                background-color: #eaeaea;
+                padding: 5px;
+                margin-top: 5px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+
+            .header {
+                background-color: #333;
+                color: white;
+                padding: 15px;
+                text-align: center;
+            }
+
+            footer {
+                margin-top: 20px;
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="header">
+            <h1>Database API Documentation</h1>
+            <p>Version 1.0</p>
+        </div>
+
+        <h2>Authentication</h2>
+        <div class="endpoint">
+            <h3>Register User</h3>
+            <p><strong>POST</strong> /register</p>
+            <p>
+                Registers a new user with email, username, and a secure
+                password.
+            </p>
+            <p>
+                <strong>Password Requirements:</strong> Minimum 8 characters, at
+                least one uppercase letter, one lowercase letter, one number,
+                and one special character.
+            </p>
+            <pre>
+Request Body:
+{
+    "email": "user@example.com",
+    "username": "testuser",
+    "password": "Password@123"
+}</pre
+            >
+            <p>
+                <strong>Response:</strong> 201 Created - User registered
+                successfully.
+            </p>
+        </div>
+
+        <h2>Data Types</h2>
+        <p>
+            When creating a table, you can specify the following data types for
+            the columns:
+        </p>
+        <ul>
+            <li><strong>INTEGER:</strong> Stores integer values.</li>
+            <li><strong>STRING:</strong> Stores text values.</li>
+            <li><strong>BOOLEAN:</strong> Stores true/false values.</li>
+            <li><strong>DATE:</strong> Stores date objects.</li>
+            <li>
+                <strong>NULL:</strong> Allows storing <code>null</code> values.
+            </li>
+        </ul>
+
+        <h2>Table Operations</h2>
+        <div class="endpoint">
+            <h3>Create Table</h3>
+            <p><strong>POST</strong> /createTable</p>
+            <p>Creates a new table with the specified columns.</p>
+            <pre>
+Request Body:
+{
+    "tableName": "users",
+    "columns": [
+        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "name", "type": "STRING" },
+        { "name": "age", "type": "INTEGER" }
+    ]
+}</pre
+            >
+            <p>
+                <strong>Response:</strong> 201 Created - Table created
+                successfully.
+            </p>
+        </div>
+
+        <div class="endpoint">
+            <h3>Create Table If Not Exist</h3>
+            <p><strong>POST</strong> /createTableIfNotExist</p>
+            <p>Creates a table if it doesn't already exist.</p>
+            <pre>
+Request Body:
+{
+    "tableName": "users",
+    "columns": [
+        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "name", "type": "STRING" },
+        { "name": "age", "type": "INTEGER" }
+    ]
+}</pre
+            >
+            <p>
+                <strong>Response:</strong> 201 Created or 200 OK if the table
+                already exists.
+            </p>
+        </div>
+
+        <div class="endpoint">
+            <h3>Insert Data</h3>
+            <p><strong>POST</strong> /insert</p>
+            <p>Inserts a new row into the specified table.</p>
+            <pre>
+Request Body:
+{
+    "tableName": "users",
+    "values": [1, "Alice", 30]
+}</pre
+            >
+            <p>
+                <strong>Response:</strong> 201 Created - Data inserted
+                successfully.
+            </p>
+        </div>
+
+        <div class="endpoint">
+            <h3>Select Data</h3>
+            <p><strong>GET</strong> /select</p>
+            <p>Selects data from the specified table.</p>
+            <pre>
+Query Parameters:
+?tableName=users&column=age&operator=%3E&value=25</pre
+            >
+            <p><strong>Response:</strong> Selected rows in JSON format.</p>
+        </div>
+
+        <div class="endpoint">
+            <h3>Update Data</h3>
+            <p><strong>POST</strong> /update</p>
+            <p>Updates rows that match the given conditions.</p>
+            <pre>
+Request Body:
+{
+    "tableName": "users",
+    "conditions": [{ "column": "name", "operator": "==", "value": "Alice" }],
+    "updates": { "age": 31 }
+}</pre
+            >
+            <p><strong>Response:</strong> Number of rows updated.</p>
+        </div>
+
+        <div class="endpoint">
+            <h3>Get Table Names</h3>
+            <p><strong>GET</strong> /tableNames</p>
+            <p>Retrieves the names of all available tables.</p>
+            <p>
+                <strong>Response:</strong> Array of table names in JSON format.
+            </p>
+        </div>
+
+        <div class="endpoint">
+            <h3>Get Table Schema</h3>
+            <p><strong>GET</strong> /tableSchema</p>
+            <p>Retrieves the schema of the specified table.</p>
+            <pre>
+Query Parameter:
+?tableName=users</pre
+            >
+            <p>
+                <strong>Response:</strong> JSON object representing the table
+                schema.
+            </p>
+        </div>
+
+        <footer>
+            <p>© 2024 Your Company. All rights reserved.</p>
+        </footer>
+    </body>
+</html>
